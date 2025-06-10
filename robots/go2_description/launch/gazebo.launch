@@ -3,7 +3,7 @@
   
   <arg name="x" default="0.0"/>
   <arg name="y" default="0.2"/>
-  <arg name="z" default="0.8"/>    
+  <arg name="z" default="0.5"/>    
   <arg name="yaw" default="0.4"/>
     
   <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
@@ -15,18 +15,68 @@
     pkg="tf2_ros"
     exec="static_transform_publisher"
     args="--x 0 --y 0 --z 0 --roll 0 --pitch 0 --yaw 0 --frame-id base_link --child-frame-id base_footprint" />
+
+  <!-- $(find-pkg-share go2_description)/urdf/go2_description.urdf"-->  
+  <!-- $(find-pkg-share go2_description)/xacro/robot.xacro" -->  
+  <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" value="100.0"/>
+    <param name="robot_description"  type="str" value="$(command 'xacro $(find-pkg-share go2_description)/xacro/robot.xacro')" />
+    <param name="use_sim_time" value="true"/>            
+  </node>  
   
   <node
     name="spawn_model"
     pkg="ros_gz_sim"
     exec="create"
-    args="-file $(find-pkg-share go2_description)/urdf/go2_description.urdf -name go2_description -x $(var x) -y $(var y) -z $(var z) -yaw $(var yaw)"
-    output="screen" />
-    
+    args="-topic /robot_description -name go2 -x $(var x) -y $(var y) -z $(var z) -yaw $(var yaw) -J FR_thigh_joint 1.0 -J FL_thigh_joint 1.0 -J RR_thigh_joint 0.7 -J RL_thigh_joint 0.7"
+    output="screen">
+    <param name="use_sim_time" value="true"/>
+  </node>  
+                
 <!--  <node
     name="fake_joint_calibration"
     pkg="rostopic"
     exec="rostopic"
     args="pub /calibrated std_msgs/Bool true" />-->
+
+  <node name="go2_bridge" pkg="ros_gz_bridge" exec="parameter_bridge"
+    args="'/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'"
+    output="screen">
+    <param name="use_sim_time" value="true"/>
+    <!--<param name="config_file" value="bridge_file.yaml">-->
+  </node> 
+  
+  bridge = Node(
+      package='ros_gz_bridge',
+      executable='parameter_bridge',
+      parameters=[{'config_file': bridge_config_file}],
+      #arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+      output='screen'
+  )
+
+  <node name="start_joint_state_broadcaster" pkg="controller_manager" exec="spawner"
+    args="joint_state_broadcaster --controller-manager /controller_manager"
+    output="screen">
+    <param name="use_sim_time" value="true"/>
+  </node> 
+
+  <node name="start_joint_trajectory_controller" pkg="controller_manager" exec="spawner"
+    args="joint_state_controller -c /controller_manager"
+    output="screen">
+    <param name="use_sim_time" value="true"/>
+  </node> 
+  
+<!--      RegisterEventHandler(
+          event_handler=OnProcessExit(
+              target_action=spawn_entity_to_gazebo_node,
+              on_exit=[load_joint_state_controller],
+          )
+      ),
+      RegisterEventHandler(
+          event_handler=OnProcessExit(
+              target_action=load_joint_state_controller,
+              on_exit=[load_joint_trajectory_controller],
+          )
+      ),-->
 
 </launch>

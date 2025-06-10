@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <robot>
+
     <!-- ros_control plugin -->
     <gazebo>
-        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-            <robotNamespace>/go2_gazebo</robotNamespace>
-            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-        </plugin>
+      <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="gz_ros2_control-system">
+        <parameters>$(find go2_description)/config/ros2_control_go2.yaml</parameters>
+      </plugin>
     </gazebo>
 
     <!-- Show the trajectory of trunk center. -->
@@ -21,7 +21,7 @@
     </gazebo-->
 
     <!-- Show the trajectory of foot. You can add another trajectory about another foot. -->
-     <gazebo>
+     <!--<gazebo>
         <plugin name="3dplot" filename="libLinkPlot3DPlugin.so">
             <frequency>100</frequency>
             <plot>
@@ -29,14 +29,14 @@
                 <pose>0 0 0 0 0 0</pose>
             </plot>
         </plugin>
-    </gazebo>
+    </gazebo>-->
 
-    <gazebo>
+    <!--<gazebo>
         <plugin filename="libgazebo_ros_force.so" name="gazebo_ros_force">
             <bodyName>trunk</bodyName>
             <topicName>/apply_force/trunk</topicName>
         </plugin>
-    </gazebo>
+    </gazebo>-->
 
     <gazebo reference="imu_link">
         <gravity>true</gravity>
@@ -45,7 +45,7 @@
             <update_rate>1000</update_rate>
             <visualize>true</visualize>
             <topic>__default_topic__</topic>
-            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+            <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu">
                 <topicName>trunk_imu</topicName>
                 <bodyName>imu_link</bodyName>
                 <updateRateHZ>1000.0</updateRateHZ>
@@ -65,7 +65,7 @@
 
 
     <!-- Foot contacts. -->
-    <gazebo reference="FR_calf">
+    <!--<gazebo reference="FR_calf">
         <sensor name="FR_foot_contact" type="contact">
         <update_rate>100</update_rate>
         <plugin name="contactPlugin" filename="libunitreeFootContactPlugin.so"/>
@@ -100,10 +100,10 @@
             <collision>RL_calf_fixed_joint_lump__RL_foot_collision_1</collision>
         </contact>
         </sensor>
-    </gazebo>
+    </gazebo>-->
 
     <!-- Visualization of Foot contacts. -->
-    <gazebo reference="FR_foot">
+    <!--<gazebo reference="FR_foot">
         <visual>
             <plugin name="drawForcePlugin" filename="libunitreeDrawForcePlugin.so">
                 <topicName>FR_foot_contact</topicName>
@@ -130,7 +130,7 @@
                 <topicName>RL_foot_contact</topicName>
             </plugin>
         </visual>
-    </gazebo>
+    </gazebo>-->
 
     <gazebo reference="base">
         <turnGravityOff>false</turnGravityOff>
