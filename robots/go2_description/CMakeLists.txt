@@ -1,14 +1,23 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.16.3)
 
 project(go2_description)
 
-find_package(catkin REQUIRED)
+find_package(ament_cmake REQUIRED)
 
-catkin_package()
+set(dependencies
+  rviz2
+  robot_state_publisher
+  joint_state_publisher_gui
+  ros_gz_sim
+)
 
-find_package(roslaunch)
+foreach(dependency IN ITEMS ${DEPS})
+  find_package(${dependency} REQUIRED)
+endforeach()
 
-foreach(dir config launch meshes urdf)
-	install(DIRECTORY ${dir}/
-		DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
-endforeach(dir)
+install(DIRECTORY config launch meshes urdf dae
+        DESTINATION share/${PROJECT_NAME}
+)
+
+
+ament_package()
