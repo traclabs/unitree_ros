@@ -15,7 +15,7 @@ foreach(dependency IN ITEMS ${DEPS})
   find_package(${dependency} REQUIRED)
 endforeach()
 
-install(DIRECTORY config launch meshes urdf dae worlds xacro
+install(DIRECTORY config launch meshes urdf dae worlds xacro models
         DESTINATION share/${PROJECT_NAME}
 )
 

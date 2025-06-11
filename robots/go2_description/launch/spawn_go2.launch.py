@@ -17,6 +17,23 @@ import os
 import xacro
 import yaml
 
+def evaluate_pose(context, *args, **kwargs):
+
+  # Robot gonna fall at the beginning. Here we pick it up
+  x = LaunchConfiguration("x").perform(context)
+  y = LaunchConfiguration("y").perform(context)
+  z = LaunchConfiguration("z").perform(context)
+  
+  position="position: {x: " + x + ", y: " + y + ", z: " + z + "}"
+  request_string = 'name: "go2", ' + position
+  stand_up = ExecuteProcess(cmd=['gz', 'service', '-s', '/world/demo/set_pose', 
+             '--reqtype', 'gz.msgs.Pose', '--reptype', 'gz.msgs.Boolean', '--timeout', '1000',
+             '--req', request_string], 
+             name="stand_up",
+             output="both")
+
+  return [stand_up]
+
 ##################################################################
 def generate_launch_description():
 
@@ -42,6 +59,10 @@ def generate_launch_description():
         'yaw',
         default_value='-0.5',
         description='Yaw at which to spawn Spot.'),
+    DeclareLaunchArgument(
+        'robot_up',
+        default_value='7.0',
+        description='Time that we wait till we send a set_pose command to set robot standing up.'),        
     DeclareLaunchArgument(
         'use_simulator',
         default_value='True',
@@ -139,12 +160,7 @@ def generate_launch_description():
         PathJoinSubstitution([FindPackageShare('champ_bringup'), 'launch', 'go2_quadruped_controller.launch.py'])
   )
 
-  # Robot gonna fall at the beginning. Here we pick it up  
-  stand_up = ExecuteProcess(cmd=['gz', 'service', '-s', '/world/demo/set_pose', 
-             '--reqtype', 'gz.msgs.Pose', '--reptype', 'gz.msgs.Boolean', '--timeout', '1000',
-             '--req', 'name: "go2", position: {x: 0, y:0, z:0.40}'], 
-             name="stand_up",
-             output="both")
+  stand_up = OpaqueFunction(function=evaluate_pose)
 
   return LaunchDescription(
     launch_args +
@@ -168,7 +184,7 @@ def generate_launch_description():
       RegisterEventHandler(
           event_handler=OnProcessExit(
               target_action=load_joint_trajectory_controller,
-              on_exit=[launch_quadruped_controller, TimerAction(period=7.0, actions=[stand_up]) ],
+              on_exit=[launch_quadruped_controller, TimerAction(period=LaunchConfiguration("robot_up"), actions=[stand_up]) ],
           ),
           condition=IfCondition(LaunchConfiguration("start_quadruped_controller"))
       ),

@@ -5,9 +5,11 @@
   <arg name="y" default="0.2"/>
   <arg name="z" default="0.5"/>    
   <arg name="yaw" default="0.4"/>
-    
+  <arg name="world" default="ionic_reduced"/> <!-- ionic_reduced living_room ground_plane-->  
+  <arg name="robot_up" default="10.0"/>
+
   <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
-    <arg name="gz_args" value="$(find-pkg-share go2_description)/worlds/ground_plane.sdf -r -v 4"/>
+    <arg name="gz_args" value="$(find-pkg-share go2_description)/worlds/$(var world).sdf -r -v 4"/>
   </include>
     
   <node
@@ -28,7 +30,8 @@
     <arg name="x" value="$(var x)"/>
     <arg name="y" value="$(var y)"/>
     <arg name="z" value="$(var z)"/>
-    <arg name="yaw" value="$(var yaw)"/>            
+    <arg name="yaw" value="$(var yaw)"/>
+    <arg name="robot_up" value="$(var robot_up)"/>        
   </include>  
 
 <!--  <node
