@@ -136,4 +136,18 @@
     
     <xacro:go2_ros2_control interface_type="gazebo"/>
     
+        <!-- PosePublisher - P3D-equivalent -->
+    <xacro:macro name="go2_pose_publisher">
+      <gazebo>
+        <plugin filename="gz-sim-pose-publisher-system" name="gz::sim::systems::PosePublisher">
+          <publish_link_pose>false</publish_link_pose>
+          <publish_nested_model_pose>true</publish_nested_model_pose>
+          <publish_model_pose>true</publish_model_pose>
+          <update_frequency>30</update_frequency>
+          <use_pose_vector_msg>false</use_pose_vector_msg>
+        </plugin>
+      </gazebo> 
+    </xacro:macro>
+
+    <xacro:go2_pose_publisher />
 </robot>
