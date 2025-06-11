@@ -11,7 +11,7 @@
     <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher">
         <param name="publish_frequency" value="100.0"/>
         <!--<param name="robot_description"  type="str" value="$(command 'xacro $(find-pkg-share go2_description)/urdf/go2_description.urdf')" />-->
-        <param name="robot_description"  type="str" value="$(command 'xacro $(find-pkg-share go2_description)/xacro/robot.xacro')" />        
+        <param name="robot_description"  type="str" value="$(command 'xacro $(find-pkg-share go2_description)/xacro/robot.urdf.xacro')" />        
     </node>
 
     <node pkg="rviz2" exec="rviz2" name="rviz" respawn="false" output="screen"
