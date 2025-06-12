@@ -23,12 +23,12 @@ def evaluate_pose(context, *args, **kwargs):
   x = LaunchConfiguration("x").perform(context)
   y = LaunchConfiguration("y").perform(context)
   z = LaunchConfiguration("z").perform(context)
-  
+
   position="position: {x: " + x + ", y: " + y + ", z: " + z + "}"
   request_string = 'name: "go2", ' + position
-  stand_up = ExecuteProcess(cmd=['gz', 'service', '-s', '/world/demo/set_pose', 
+  stand_up = ExecuteProcess(cmd=['gz', 'service', '-s', '/world/demo/set_pose',
              '--reqtype', 'gz.msgs.Pose', '--reptype', 'gz.msgs.Boolean', '--timeout', '1000',
-             '--req', request_string], 
+             '--req', request_string],
              name="stand_up",
              output="both")
 
@@ -62,7 +62,7 @@ def generate_launch_description():
     DeclareLaunchArgument(
         'robot_up',
         default_value='7.0',
-        description='Time that we wait till we send a set_pose command to set robot standing up.'),        
+        description='Time that we wait till we send a set_pose command to set robot standing up.'),
     DeclareLaunchArgument(
         'use_simulator',
         default_value='True',
@@ -128,7 +128,7 @@ def generate_launch_description():
         output="screen",
         parameters=[{"robot_pose_topic": "/model/go2/pose", "fixed_frame": "world", "robot_frame": LaunchConfiguration("robot_base_link")}]
   )
-  
+
 
   load_joint_state_controller = Node(
         package="controller_manager",
@@ -184,10 +184,9 @@ def generate_launch_description():
       RegisterEventHandler(
           event_handler=OnProcessExit(
               target_action=load_joint_trajectory_controller,
-              on_exit=[launch_quadruped_controller, TimerAction(period=LaunchConfiguration("robot_up"), actions=[stand_up]) ],
+              on_exit=[launch_quadruped_controller], #, TimerAction(period=LaunchConfiguration("robot_up"), actions=[stand_up]) ],
           ),
           condition=IfCondition(LaunchConfiguration("start_quadruped_controller"))
       ),
       odom_republish_node
-    ])      
-      
+    ])
