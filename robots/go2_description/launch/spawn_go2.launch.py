@@ -32,7 +32,9 @@ def evaluate_pose(context, *args, **kwargs):
              name="stand_up",
              output="both")
 
-  return [stand_up]
+  wait_time = LaunchConfiguration("robot_up").perform(context)
+
+  return [TimerAction(period=float(wait_time), actions=[stand_up])]
 
 ##################################################################
 def generate_launch_description():
@@ -184,7 +186,7 @@ def generate_launch_description():
       RegisterEventHandler(
           event_handler=OnProcessExit(
               target_action=load_joint_trajectory_controller,
-              on_exit=[launch_quadruped_controller], #, TimerAction(period=LaunchConfiguration("robot_up"), actions=[stand_up]) ],
+              on_exit=[launch_quadruped_controller, stand_up],
           ),
           condition=IfCondition(LaunchConfiguration("start_quadruped_controller"))
       ),
