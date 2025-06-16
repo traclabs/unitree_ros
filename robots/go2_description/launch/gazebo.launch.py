@@ -53,7 +53,7 @@ def generate_launch_description():
         DeclareLaunchArgument("z", default_value="0.5"),
         DeclareLaunchArgument("yaw", default_value="0.4"),
         DeclareLaunchArgument(
-            "world", default_value=os.path.join(desc_dir, "worlds", "ground_plane.sdf")
+            "world", default_value=os.path.join(desc_dir, "worlds", "ionic_reduced.sdf")
         ),  # e.g., ionic_reduced, living_room, ground_plane
         DeclareLaunchArgument("robot_up", default_value="10.0"),
         DeclareLaunchArgument("use_sim_time", default_value="true"),
